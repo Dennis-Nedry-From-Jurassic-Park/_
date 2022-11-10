@@ -23,7 +23,7 @@
     "removeComments": true,
     "isolatedModules": false,
     "incremental": true,
-    "importHelpers": true,
+    "importHelpers": false,
     "outDir": "./dist",
     "baseUrl": "./",
     "emitDecoratorMetadata": true,
@@ -72,8 +72,8 @@
     "*.test.ts"
   ],
   "paths": {
-    "@ms-template/*": [
-      "apps/ms-template/src/*"
+    "@ms-investing/*": [
+      "apps/ms-investing/src/*"
     ]
   }
 }
