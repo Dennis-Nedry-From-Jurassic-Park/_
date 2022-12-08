@@ -15,5 +15,7 @@ jobs:
           install-command: yarn install --prod --frozen-lockfile --non-interactive
           working-directory: |
             packages/backend/
-#
+      - name: Run yarn
+          working-directory: packages/backend/
+          run: yarn
 
