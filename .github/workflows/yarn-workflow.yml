@@ -25,6 +25,7 @@ jobs:
           working-directory: packages/backend/
           run: yarn build
   atr_notifier_rsync_deploy:
+    needs: build-and-test
     runs-on: ubuntu-latest
     name: rsync-deploy-action
     steps:
@@ -42,6 +43,6 @@ jobs:
           remote_server_ip: ${{ secrets.REMOTE_SERVER_IP }}
           ssh_port: ${{ secrets.SSH_PORT }}
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source_path: ./backend/dist/*
+          source_path: ./packages/backend/dist/*
           destination_path: ~/dist/atr-notifier
 
