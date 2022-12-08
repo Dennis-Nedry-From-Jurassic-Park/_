@@ -1,6 +1,6 @@
 import {get_index, IndexInvesting} from "./common";
-import bot from "./telegram/bot";
-import secrets from "./utility-methods/env";
+import bot from "../../ms-base/src/telegram/bot";
+import secrets from "../../ms-base/src/utility-methods/env";
 
 const exec_investing_robot = async () => {
     //const moex = await get_index(IndexInvesting.IMOEX);
@@ -71,6 +71,9 @@ const exec = async () => {
         console.log(data);
     } catch(err){
         console.log(err);
+        //await delay(30000);
+
+
     }
 
 }

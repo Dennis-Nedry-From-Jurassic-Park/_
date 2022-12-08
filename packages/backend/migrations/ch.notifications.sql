@@ -1,0 +1,1 @@
+CREATE TABLE tbl_buf_notifications AS tbl_notifications ENGINE = Buffer(default, tbl_notifications, 2, 21600, 43200, 10000, 1000000, 10000000, 100000000);
