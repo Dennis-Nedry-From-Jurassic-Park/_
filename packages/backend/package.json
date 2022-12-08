@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "tsc -p .",
-    "test": "yarn test",
+    "test": "jest",
     "start:ms:investing": "ts-node -r tsconfig-paths/register apps/ms-investing/src/main.ts"
   },
   "dependencies": {
