@@ -21,6 +21,9 @@ jobs:
       - name: Run yarn
           working-directory: packages/backend/
           run: yarn
+      - name: Run build
+          working-directory: packages/backend/
+          run: yarn build
   atr_notifier_rsync_deploy:
     runs-on: ubuntu-latest
     name: rsync-deploy-action
