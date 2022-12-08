@@ -15,7 +15,5 @@ jobs:
           install-command: yarn install --prod --frozen-lockfile --non-interactive
           working-directory: |
             packages/backend/
-      - name: Run tests
-        working-directory: packages/backend/
-        run: yarn test
+#
 
