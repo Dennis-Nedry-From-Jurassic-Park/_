@@ -1,5 +1,5 @@
 name: yarn-workflow
-on: [pull_request]
+on: [push, pull_request]
 
 jobs:
   build-and-test:
