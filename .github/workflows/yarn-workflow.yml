@@ -14,7 +14,6 @@ jobs:
       - name: Run install
         uses: bahmutov/npm-install@v1
         with:
-          #run: yarn test
           useLockFile: false
           install-command: yarn install --prod --frozen-lockfile --non-interactive
           working-directory: |
@@ -32,8 +31,6 @@ jobs:
       - run: sudo apt-get install rsync
       - name: Adding Known Hosts
         run: |
-          ls -a .
-          ls -a packages/backend/
           ls -a packages/backend/dist/
       - name: Deploy theme on server
         id: deploy_theme
