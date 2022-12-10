@@ -18,14 +18,17 @@ jobs:
           install-command: yarn install --prod --frozen-lockfile --non-interactive
           working-directory: |
             packages/backend/
-      - name: Run yarn
+      - name: Run install
+          uses: borales/actions-yarn@v4
           with:
-            working-directory: |
-              packages/backend/
-          run: yarn
+            dir: 'packages/backend/'
+            cmd: install --prod --frozen-lockfile --non-interactive
       - name: Run build
-          working-directory: packages/backend/
-          run: yarn build
+          uses: borales/actions-yarn@v4
+          with:
+            dir: 'packages/backend/'
+            cmd: build
+          run: yarn
   build:
     needs: build-and-test
     runs-on: ubuntu-latest
