@@ -29,7 +29,6 @@ jobs:
         with:
           dir: 'packages/backend/'
           cmd: build
-        run: yarn
   build:
     needs: build-and-test
     runs-on: ubuntu-latest
