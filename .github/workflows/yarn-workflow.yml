@@ -24,25 +24,47 @@ jobs:
       - name: Run build
           working-directory: packages/backend/
           run: yarn build
-  atr_notifier_rsync_deploy:
-    needs: build-and-test
+  build:
     runs-on: ubuntu-latest
-    name: rsync-deploy-action
+    needs: build-and-test
+    timeout-minutes: 1
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@main
-      - name: Modify files permissions
-        run: |
-          chmod 777 -R ./packages/backend/dist
-          ls -l
-      - name: Tester
-        uses: yeshan333/rsync-deploy-action@v1.0.0
-        id: rsync-deploy-action
-        with:
-          ssh_login_username: ${{ secrets.SSH_LOGIN_USERNAME }}
-          remote_server_ip: ${{ secrets.REMOTE_SERVER_IP }}
-          ssh_port: ${{ secrets.SSH_PORT }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source_path: ./packages/backend/dist/*
-          destination_path: ~/dist/atr-notifier
+      -   run: ls -la
+      -   uses: actions/checkout@master
+
+      -   run: sudo apt-get install rsync
+
+      -   name: Deploy theme on server
+          id: deploy_theme
+          uses: Pendect/action-rsyncer@v1.1.0
+          env:
+            DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
+          with:
+            flags: '-avc --delete'
+            src: 'dist/'
+            dest: 'root@"${{secrets.SERVER_IP}}":/root/dist/atr-notifier'
+
+      -   name: Display status from deploy
+          run: echo "${{ steps.deploy.outputs.status }}"
+#  atr_notifier_rsync_deploy:
+#    needs: build-and-test
+#    runs-on: ubuntu-latest
+#    name: rsync-deploy-action
+#    steps:
+#      - name: Checkout repository
+#        uses: actions/checkout@main
+#      - name: Modify files permissions
+#        run: |
+#          chmod 777 -R ./packages/backend/dist
+#          ls -l
+#      - name: Tester
+#        uses: yeshan333/rsync-deploy-action@v1.0.0
+#        id: rsync-deploy-action
+#        with:
+#          ssh_login_username: ${{ secrets.SSH_LOGIN_USERNAME }}
+#          remote_server_ip: ${{ secrets.REMOTE_SERVER_IP }}
+#          ssh_port: ${{ secrets.SSH_PORT }}
+#          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          source_path: ./packages/backend/dist/*
+#          destination_path: ~/dist/atr-notifier
 
