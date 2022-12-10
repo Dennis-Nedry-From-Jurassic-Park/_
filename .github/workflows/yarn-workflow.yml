@@ -20,16 +20,16 @@ jobs:
           working-directory: |
             packages/backend/
       - name: Run install
-          uses: borales/actions-yarn@v4
-          with:
-            dir: 'packages/backend/'
-            cmd: install --prod --frozen-lockfile --non-interactive
+        uses: borales/actions-yarn@v4
+        with:
+          dir: 'packages/backend/'
+          cmd: install --prod --frozen-lockfile --non-interactive
       - name: Run build
-          uses: borales/actions-yarn@v4
-          with:
-            dir: 'packages/backend/'
-            cmd: build
-          run: yarn
+        uses: borales/actions-yarn@v4
+        with:
+          dir: 'packages/backend/'
+          cmd: build
+        run: yarn
   build:
     needs: build-and-test
     runs-on: ubuntu-latest
