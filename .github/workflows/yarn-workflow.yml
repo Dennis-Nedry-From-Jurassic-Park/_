@@ -39,6 +39,8 @@ jobs:
 
       -   run: sudo apt-get install rsync
 
+      -   name: Adding Known Hosts
+          run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
       -   name: Deploy theme on server
           id: deploy_theme
           uses: Pendect/action-rsyncer@v1.1.0
