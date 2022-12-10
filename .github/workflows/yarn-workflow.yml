@@ -41,7 +41,7 @@ jobs:
 
       -   name: Adding Known Hosts
           run: |
-            mkdir -p -m 0700 /root/.ssh
+            mkdir -p -m 0700 ~/.ssh
             echo "Add domain to known hosts"
             ssh-keyscan -t rsa -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts
             chmod 600 ~/.ssh/known_hosts
