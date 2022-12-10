@@ -29,7 +29,7 @@ jobs:
         with:
           dir: 'packages/backend/'
           cmd: build
-  build:
+  deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
     timeout-minutes: 1
@@ -51,6 +51,7 @@ jobs:
 
       -   name: Display status from deploy
           run: echo "${{ steps.deploy.outputs.status }}"
+
 
 
 #  atr_notifier_rsync_deploy:
