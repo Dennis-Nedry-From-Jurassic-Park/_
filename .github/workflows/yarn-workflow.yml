@@ -29,29 +29,7 @@ jobs:
         with:
           dir: 'packages/backend/'
           cmd: build
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    timeout-minutes: 1
-    steps:
-      - run: ls -la
-      - uses: actions/checkout@v2
-
       - run: sudo apt-get install rsync
-
-#      - name: Adding Known Hosts
-#        run: |
-#          mkdir -p -m 0700 ~/.ssh
-#          touch ~/.ssh/known_hosts
-#          ls -a ~/.ssh/
-#          echo "Add domain to known hosts"
-#          "ssh-keyscan -t rsa -P "" -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts"
-#          chmod 600 ~/.ssh/known_hosts
-#        #run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
-
-#      - name: Test ssh
-#        run: ssh ${{ secrets.SERVER_IP }} ps
-
       - name: Adding Known Hosts
         run: |
           ls -a .
@@ -69,6 +47,55 @@ jobs:
 
       - name: Display status from deploy
         run: echo "${{ steps.deploy.outputs.status }}"
+
+#  deploy:
+#    needs: build-and-test
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 1
+#    steps:
+#      - run: ls -la
+#      - uses: actions/checkout@v2
+#
+#      - run: sudo apt-get install rsync
+
+#      - name: Adding Known Hosts
+#        run: |
+#          mkdir -p -m 0700 ~/.ssh
+#          touch ~/.ssh/known_hosts
+#          ls -a ~/.ssh/
+#          echo "Add domain to known hosts"
+#          "ssh-keyscan -t rsa -P "" -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts"
+#          chmod 600 ~/.ssh/known_hosts
+#        #run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+#      - name: Test ssh
+#        run: ssh ${{ secrets.SERVER_IP }} ps
+
+
+
+#
+#
+#
+#      - name: Adding Known Hosts
+#        run: |
+#          ls -a .
+#          ls -a packages/backend/
+#          ls -a packages/backend/dist/
+#      - name: Deploy theme on server
+#        id: deploy_theme
+#        uses: Pendect/action-rsyncer@v1.1.0
+#        env:
+#          DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
+#        with:
+#          flags: '-avc --delete'
+#          src: "packages/backend/dist/"
+#          dest: 'root@"${{secrets.SERVER_IP}}":/root/dist/atr-notifier'
+#
+#      - name: Display status from deploy
+#        run: echo "${{ steps.deploy.outputs.status }}"
+
+
+
 
 #  atr_notifier_rsync_deploy:
 #    needs: build-and-test
