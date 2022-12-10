@@ -19,7 +19,8 @@ jobs:
           working-directory: |
             packages/backend/
       - name: Run yarn
-          working-directory: packages/backend/
+          working-directory: |
+            packages/backend/
           run: yarn
       - name: Run build
           working-directory: packages/backend/
