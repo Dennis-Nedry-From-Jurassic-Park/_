@@ -63,8 +63,6 @@ jobs:
       - name: Display status from deploy
         run: echo "${{ steps.deploy.outputs.status }}"
 
-
-
 #  atr_notifier_rsync_deploy:
 #    needs: build-and-test
 #    runs-on: ubuntu-latest
