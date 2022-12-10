@@ -59,7 +59,7 @@ jobs:
           DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
         with:
           flags: '-avc --delete'
-          src: 'dist/'
+          src: "${{ github.workspace }}/dist/"
           dest: 'root@"${{secrets.SERVER_IP}}":/root/dist/atr-notifier'
 
       - name: Display status from deploy
