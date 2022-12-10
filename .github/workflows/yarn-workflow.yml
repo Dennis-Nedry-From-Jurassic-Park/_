@@ -55,6 +55,8 @@ jobs:
       - name: Adding Known Hosts
         run: |
           ls -a .
+          ls -a packages/backend/
+          ls -a packages/backend/dist/
       - name: Deploy theme on server
         id: deploy_theme
         uses: Pendect/action-rsyncer@v1.1.0
