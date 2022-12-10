@@ -62,7 +62,7 @@ jobs:
           DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
         with:
           flags: '-avc --delete'
-          src: "./packages/backend/dist/"
+          src: "packages/backend/dist/"
           dest: 'root@"${{secrets.SERVER_IP}}":/root/dist/atr-notifier'
 
       - name: Display status from deploy
