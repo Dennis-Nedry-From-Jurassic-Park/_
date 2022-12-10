@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p -m 0700 ~/.ssh
           echo "Add domain to known hosts"
-          "ssh-keyscan -t rsa -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts | ssh-keygen -lf -"
+          "ssh-keyscan -t rsa -P "" -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts | ssh-keygen -lf -"
           chmod 600 ~/.ssh/known_hosts
         #run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
