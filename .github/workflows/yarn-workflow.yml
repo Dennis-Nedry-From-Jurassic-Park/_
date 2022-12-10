@@ -52,6 +52,9 @@ jobs:
 #      - name: Test ssh
 #        run: ssh ${{ secrets.SERVER_IP }} ps
 
+      - name: Adding Known Hosts
+        run: |
+          ls -a .
       - name: Deploy theme on server
         id: deploy_theme
         uses: Pendect/action-rsyncer@v1.1.0
