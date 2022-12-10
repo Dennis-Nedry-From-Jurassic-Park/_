@@ -34,34 +34,34 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 1
     steps:
-      -   run: ls -la
-      -   uses: actions/checkout@v2
+      - run: ls -la
+      - uses: actions/checkout@v2
 
-      -   run: sudo apt-get install rsync
+      - run: sudo apt-get install rsync
 
-      -   name: Adding Known Hosts
-          run: |
-            mkdir -p -m 0700 ~/.ssh
-            echo "Add domain to known hosts"
-            ssh-keyscan -t rsa -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts
-            chmod 600 ~/.ssh/known_hosts
-          #run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+      - name: Adding Known Hosts
+        run: |
+          mkdir -p -m 0700 ~/.ssh
+          echo "Add domain to known hosts"
+          "ssh-keyscan -t rsa -p 22 ${{ secrets.SERVER_IP }} > ~/.ssh/known_hosts"
+          chmod 600 ~/.ssh/known_hosts
+        #run: ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
 
       - name: Test ssh
         run: ssh ${{ secrets.SERVER_IP }} ps
 
-      -   name: Deploy theme on server
-          id: deploy_theme
-          uses: Pendect/action-rsyncer@v1.1.0
-          env:
-            DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
-          with:
-            flags: '-avc --delete'
-            src: 'dist/'
-            dest: 'root@"${{secrets.SERVER_IP}}":/root/dist/atr-notifier'
+      - name: Deploy theme on server
+        id: deploy_theme
+        uses: Pendect/action-rsyncer@v1.1.0
+        env:
+          DEPLOY_KEY: ${{secrets.DEPLOY_KEY}}
+        with:
+          flags: '-avc --delete'
+          src: 'dist/'
+          dest: 'root@"${{secrets.SERVER_IP}}":/root/dist/atr-notifier'
 
-      -   name: Display status from deploy
-          run: echo "${{ steps.deploy.outputs.status }}"
+      - name: Display status from deploy
+        run: echo "${{ steps.deploy.outputs.status }}"
 
 
 
