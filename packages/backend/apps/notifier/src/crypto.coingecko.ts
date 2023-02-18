@@ -1,9 +1,7 @@
-import {keydb_client} from "../../connector/keydb";
-
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
 
-const exec = async () => {
+const exec999 = async () => {
     let data = await CoinGeckoClient.ping();
     console.log(data);
     try {
@@ -32,7 +30,7 @@ const exec = async () => {
         console.log(err);
         //await delay(30000);
 
-
     }
-
 }
+
+exec999()
