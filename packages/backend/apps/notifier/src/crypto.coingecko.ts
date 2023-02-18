@@ -1,6 +1,7 @@
+import {keydb_client} from "../../connector/keydb";
+
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
-
 
 const exec = async () => {
     let data = await CoinGeckoClient.ping();
@@ -22,7 +23,6 @@ const exec = async () => {
                 'polkadot',
                 'fantom',
                 'cosmos-hub',
-                // zcash
                 'the-open-network',
             ],
             vs_currencies: ['usd', 'rub'],
@@ -36,4 +36,3 @@ const exec = async () => {
     }
 
 }
-exec();
