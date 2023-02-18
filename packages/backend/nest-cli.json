@@ -1,0 +1,49 @@
+{
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "/",
+  "monorepo": true,
+  "root": "/",
+  "compilerOptions": {
+    "webpack": false,
+    "tsConfigPath": "/tsconfig.json",
+    "plugins": [
+      {
+        "name": "@nestjs/swagger/plugin",
+        "options": {
+          "introspectComments": true,
+          "dtoFileNameSuffix": [
+            ".entity.ts",
+            ".dto.ts",
+            ".types.ts",
+            ".decorator.ts"
+          ]
+        }
+      }
+    ]
+  },
+  "projects": {
+    "notifier": {
+      "type": "application",
+      "root": "apps/notifier",
+      "entryFile": "main",
+      "sourceRoot": "apps/notifier/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/notifier/tsconfig.app.json",
+        "plugins": [
+          {
+            "name": "@nestjs/swagger/plugin",
+            "options": {
+              "introspectComments": true,
+              "dtoFileNameSuffix": [
+                ".entity.ts",
+                ".dto.ts",
+                ".types.ts",
+                ".decorator.ts"
+              ]
+            }
+          }
+        ]
+      }
+    }
+  }
+}
