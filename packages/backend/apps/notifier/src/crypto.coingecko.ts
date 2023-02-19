@@ -25,7 +25,22 @@ const exec999 = async () => {
             ],
             vs_currencies: ['usd', 'rub'],
         });
-        console.log(data);
+        
+        console.log(data.data);
+
+        Object.entries(data.data).forEach(
+            ([key, value]: [string, any]) => {
+                console.log(key, value['usd']);
+            });
+
+        // for (const [key, value]: [string, any] of Object.entries(data.data)) {
+        //     console.log(key + ':' + value['usd']);
+        // }
+
+        // Object.keys(data.data).forEach((key: string) => {
+        //     console.log(key + ' = ' + data[key]);
+        // });
+
     } catch(err){
         console.log(err);
         //await delay(30000);
