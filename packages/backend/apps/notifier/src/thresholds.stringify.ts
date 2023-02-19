@@ -1,0 +1,1 @@
+export const stringify = require('safe-stable-stringify')

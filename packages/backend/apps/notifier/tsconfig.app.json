@@ -2,8 +2,10 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "declaration": false,
-    "outDir": "../../dist/apps/ms-template"
+    "outDir": "../../dist",
+    "strictNullChecks": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "logs", "**/*spec.ts"]
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
+
