@@ -5,7 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "------------ pnpm ------------": "------------ pnpm ------------",
-    "pnpm:add:package": "npx pnpm add source-map-support",
+    "pnpm:add:package": "npx pnpm add lodash",
     "pnpm:install": "npx pnpm -r install --recursive",
     "----------- common -----------": "----------- common -----------",
     "prebuild": "rimraf dist",
@@ -14,24 +14,20 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-
     "start:ms:investing": "ts-node -r tsconfig-paths/register ../../other/ms-investing/src/main.ts",
     "start:ms:notification": "ts-node -r tsconfig-paths/register ../../other/ms-notification/src/main.ts",
     "start:ms:notifier": "ts-node -r tsconfig-paths/register apps/notifier/app.ts",
     "start:keydb.ts": "ts-node -r tsconfig-paths/register ../../other/ms-notifier/src/keydb.ts",
     "crypto.coingecko.ts": "ts-node -r tsconfig-paths/register apps/notifier/src/crypto.coingecko.ts",
+    "algo.ts": "ts-node -r tsconfig-paths/register apps/notifier/src/algo.ts",
     "o.ts": "ts-node -r tsconfig-paths/register ../../other/ms-notifier/src/o.ts",
     "vault.ts": "ts-node -r tsconfig-paths/register ../../other/ms-notifier/src/vault.ts",
     "nats": "ts-node -r tsconfig-paths/register ../../other/ms-notification/src/nats.ts",
     "build": "nest build",
     "start": "nest start",
     "start:auto": "nest build & nest start"
-
   },
   "dependencies": {
-    "rimraf": "4.1.2",
-    "safe-stable-stringify": "4.1.2",
-
     "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "^9.0.11",
     "@nestjs/core": "^9.0.11",
@@ -48,29 +44,29 @@
     "fastify": "^4.13.0",
     "flat-cache": "^3.0.4",
     "investing-com-api": "^4.3.0",
+    "lodash": "^4.17.21",
     "object-observer": "^5.1.6",
     "on-change": "^4.0.2",
     "redis": "^4.5.1",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "4.1.2",
     "rxjs": "^7.6.0",
+    "rxjs-array": "0.0.1-a",
+    "safe-stable-stringify": "2.4.2",
     "telegraf": "^4.10.0",
     "timestamp-nano": "^1.0.0"
   },
   "devDependencies": {
-    "@types/jest": "^29.2.2",
-    "@types/node": "^18.13.0",
-
-
     "@nestjs/cli": "9.2.0",
     "@nestjs/schematics": "9.0.4",
     "@nestjs/swagger": "6.2.1",
+    "@types/jest": "^29.2.2",
+    "@types/node": "^18.13.0",
     "jest": "^28.1.3",
-
+    "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.0",
-    "typescript": "^4.8.4",
-
-    "source-map-support": "^0.5.21"
+    "typescript": "^4.8.4"
   },
   "jest": {
     "moduleFileExtensions": [
