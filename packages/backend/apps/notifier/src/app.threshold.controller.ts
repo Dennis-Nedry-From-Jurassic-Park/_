@@ -4,6 +4,7 @@ import {Threshold} from "./thresholds.dto";
 
 @Controller('thresholds')
 export class ThresholdController {
+
     constructor(private readonly appService: ThresholdService) {}
 
     @Post([
@@ -11,11 +12,11 @@ export class ThresholdController {
         '/shares/add'
     ])
     @Header('content-type', 'application/json')
-    async add_treshold(
+    async add_thresholds(
         @Req() req: Request,
         @Body() msg: Threshold
     ) {
-        await this.appService.add_thresholds(msg);
+        await this.appService.add_thresholds_(msg);
     }
 
     @Post([
@@ -23,10 +24,23 @@ export class ThresholdController {
         '/shares/:source/get'
     ])
     @Header('content-type', 'application/json')
-    async get_tresholds(
+    async get_thresholds(
         @Req() req: Request,
         @Param() params: { source: string }
     ) {
-        return JSON.parse(await this.appService.get_thresholds(params.source));
+        return await this.appService.get_thresholds_array(params.source)
+        //const res: TickerAlert[] = JSON.parse(await this.appService.get_thresholds(params.source))
+        //return this.appService.makeUnique(res)
+    }
+    @Post([
+        "/crypto/:source/clear",
+        '/shares/:source/clear'
+    ])
+    @Header('content-type', 'application/json')
+    async clear_thresholds(
+        @Req() req: Request,
+        @Param() params: { source: string }
+    ) {
+        await this.appService.clear_thresholds(params.source)
     }
 }
