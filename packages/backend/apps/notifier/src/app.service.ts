@@ -1,19 +1,27 @@
 import {Injectable, OnApplicationShutdown} from "@nestjs/common";
 import {createClient} from "redis";
-import {getVal, NONE, ThresholdKey} from "./thresholds.keys";
+import {getVal, NONE, NotifierMap, Source, ThresholdKey} from "./thresholds.keys";
 import {stringify} from "./thresholds.stringify";
-import {Threshold, TickerValue} from "./thresholds.dto";
+import {Threshold, TickerAlert} from "./thresholds.dto";
+import {_} from "./lodash";
 
 @Injectable()
 export class ThresholdService implements OnApplicationShutdown {
-    private thresholds_shares_coingecko: TickerValue[] = [];
+    //b_notifier_crypto_coingecko: boolean = false;
+    notifier_crypto_coingecko: NotifierMap = new Map();
+    // private notifiers = new Map<string, {
+    //     price: number,
+    //     arr: number[],
+    //     oldIndex: number,
+    //     newIndex: number,
+    // }>();
+    thresholds_shares_coingecko: TickerAlert[] = [];
     private thresholds_shares_imoex: any[] = [];
     private thresholds_shares_spbe_hkd: any[] = [];
+
     private readonly keydb_client: any;
 
-    constructor(
-
-    ){
+    constructor() {
         this.keydb_client = createClient();
     }
 
@@ -30,8 +38,50 @@ export class ThresholdService implements OnApplicationShutdown {
         console.log(signal); // e.g. "SIGINT"
     }
 
+
+    async rm_threshold(
+        ticker: string,
+        dir: string,
+        val: number,
+    ) {
+        const alerts = this.thresholds_shares_coingecko
+            .filter(it => it.ticker === ticker)[0]
+            .alerts
+        const prepared = _.pullAllBy(alerts, [{ 'dir': dir, 'val': val }], 'dir', 'val')
+        console.log(prepared);
+
+        this.thresholds_shares_coingecko
+            .filter(it => it.ticker === ticker)[0]
+            .alerts = prepared;
+        //await this.keydb_client.SET(getVal(ThresholdKey, source), );
+    }
+
     get_keydb_client() {
         return this.keydb_client;
+    }
+
+    // get_notifiers() {
+    //     return this.notifiers;
+    // }
+
+    get_notifier_crypto_coingecko() {
+        return this.notifier_crypto_coingecko;
+    }
+
+    set_notifier_crypto_coingecko(hm: Map<any, any>) {
+        this.notifier_crypto_coingecko = hm;
+    }
+
+    get_thresholds_shares_coingecko() {
+        return this.thresholds_shares_coingecko;
+    }
+
+    get_thresholds_shares_imoex() {
+        return this.thresholds_shares_imoex;
+    }
+
+    get_thresholds_shares_spbe_hkd() {
+        return this.thresholds_shares_imoex;
     }
 
     async onModuleInit() {
@@ -43,31 +93,160 @@ export class ThresholdService implements OnApplicationShutdown {
         await this.keydb_client.SETNX(ThresholdKey.IMOEX, NONE);
         await this.keydb_client.SETNX(ThresholdKey.SPBE_HKD, NONE);
 
-        this.thresholds_shares_coingecko = JSON.parse(await this.keydb_client.GET(ThresholdKey.COINGECKO));
-        this.thresholds_shares_imoex = JSON.parse(await this.keydb_client.GET(ThresholdKey.IMOEX));
-        this.thresholds_shares_spbe_hkd = JSON.parse(await this.keydb_client.GET(ThresholdKey.SPBE_HKD));
+        this.thresholds_shares_coingecko
+            = this.makeUnique(JSON.parse(await this.keydb_client.GET(ThresholdKey.COINGECKO)))
+            //_.uniqWith(JSON.parse(stringify(await this.keydb_client.GET(ThresholdKey.COINGECKO))), _.isEqual);
+            //this.unique(JSON.parse(await this.keydb_client.GET(ThresholdKey.COINGECKO)), ['dir', 'val'])
+        //this.makeUnique(JSON.parse(await this.keydb_client.GET(ThresholdKey.COINGECKO)));
+
+        this.thresholds_shares_imoex
+            = JSON.parse(await this.keydb_client.GET(ThresholdKey.IMOEX));
+        this.thresholds_shares_spbe_hkd
+            = JSON.parse(await this.keydb_client.GET(ThresholdKey.SPBE_HKD));
     }
 
-    async add_thresholds (msg: Threshold) {
+    // async update_thresholds(
+    //     thresholds: TickerAlert[],
+    //     prices: TickerPrice[],
+    //     update: boolean
+    // ) { // TODO: https://www.npmjs.com/package/type-thresholder
+    //     for (const threshold of thresholds) {
+    //         const price = prices.filter(it => it.ticker === threshold.ticker)[0]?.price
+    //         if (price) {
+    //             let arr = [...new Set(threshold.alerts)]
+    //             arr.push(price)
+    //             arr.sort()
+    //
+    //             let oldIndex = -1;
+    //             let newIndex = -1;
+    //             const i = arr.indexOf(price)
+    //
+    //             if (update) {
+    //                 oldIndex = this.notifier_crypto_coingecko.get(threshold.ticker)!.oldIndex
+    //                 newIndex = i
+    //             } else {
+    //                 oldIndex = i
+    //                 newIndex = i
+    //             }
+    //
+    //             this.notifier_crypto_coingecko.set(threshold.ticker, {
+    //                 price: price,
+    //                 thresholds: arr,
+    //                 oldIndex: oldIndex,
+    //                 newIndex: newIndex
+    //             })
+    //         }
+    //     }
+    //     return this.notifier_crypto_coingecko
+    // }
+
+    async add_thresholds_(msg: Threshold) {
         let merged_array: any[] = []
         const key = msg.type
-        if(key === ThresholdKey.COINGECKO.split('.').pop()) {
-            msg.data.forEach(it => {
-                this.thresholds_shares_coingecko.push(it)
-            })
-            merged_array = this.thresholds_shares_coingecko;
-        } else if (key === ThresholdKey.IMOEX.split('.').pop()) {
+        const tickers = msg.data.map(it => it.ticker)
+        const tickers_thresholds = this.thresholds_shares_coingecko.map(it => it.ticker)
 
-        } else if (key === ThresholdKey.SPBE_HKD.split('.').pop()) {
+        if (key === ThresholdKey.COINGECKO.split('.').pop()) {
+            for (const ticker of tickers) {
+                if (tickers_thresholds.includes(ticker)) {
+                    msg.data.forEach(it => { // обход на уровне тикеров
+                        for (const thd of it.alerts) {
+                            this.thresholds_shares_coingecko
+                                .filter(t => t.ticker === it.ticker)[0]
+                                .alerts.push(thd)
+                        }
+                    })
+                } else {
+                    msg.data.forEach(it => {
+                        this.thresholds_shares_coingecko.push(it)
+                    })
+                }
+            }
 
-        } else {
-            throw new Error('ThresholdKey not found.')
+            merged_array = this.thresholds_shares_coingecko
+            await this.keydb_client.SET(getVal(ThresholdKey, key), stringify(merged_array));
         }
-
-        await this.keydb_client.SET(getVal(ThresholdKey, key), stringify(merged_array));
     }
 
-    async get_thresholds (source: string): Promise<string> {
+    // async add_thresholds(msg: Threshold) {
+    //     let merged_array: any[] = []
+    //     const key = msg.type
+    //     const tickers = msg.data.map(it => it.ticker)
+    //     const tickers_thresholds = this.thresholds_shares_coingecko.map(it => it.ticker)
+    //
+    //     if (key === ThresholdKey.COINGECKO.split('.').pop()) {
+    //         for (const ticker of tickers) {
+    //             if (tickers_thresholds.includes(ticker)) {
+    //                 msg.data.forEach(it => { // обход на уровне тикеров
+    //                     for (const thd of it.alerts) {
+    //                         this.thresholds_shares_coingecko
+    //                             .filter(t => t.ticker === it.ticker)[0]
+    //                             .alerts.push(thd)
+    //                     }
+    //                 })
+    //             } else {
+    //                 msg.data.forEach(it => {
+    //                     this.thresholds_shares_coingecko.push(it)
+    //                 })
+    //             }
+    //         }
+    //
+    //         merged_array = this.thresholds_shares_coingecko
+    //     } else if (key === ThresholdKey.IMOEX.split('.').pop()) {
+    //
+    //     } else if (key === ThresholdKey.SPBE_HKD.split('.').pop()) {
+    //
+    //     } else {
+    //         throw new Error('ThresholdKey not found.')
+    //     }
+    //
+    //     await this.keydb_client.SET(getVal(ThresholdKey, key), stringify(merged_array));
+    // }
+
+    async get_thresholds_array(source: Source): Promise<any> {
+        if (source === Source.coingecko) {
+            return this.makeUnique(this.thresholds_shares_coingecko)
+        } else if (source === Source.imoex) {
+            return this.thresholds_shares_imoex
+        } else if (source === Source.spbe_hkd) {
+            return this.thresholds_shares_spbe_hkd
+        }
+    }
+
+    async get_thresholds(source: string): Promise<string> {
         return await this.keydb_client.GET(getVal(ThresholdKey, source));
     }
+
+    async clear_thresholds(source: string) {
+        await this.keydb_client.DEL(getVal(ThresholdKey, source));
+        this.thresholds_shares_coingecko = []
+    }
+
+    unique(arr, keyProps): any[] {
+        const kvArray = arr.map(entry => {
+            const key = keyProps.map(k => entry[k]).join('|');
+            return [key, entry];
+        });
+        const map = new Map(kvArray);
+        return Array.from(map.values());
+    }
+
+    makeUnique(array: TickerAlert[]): TickerAlert[] {
+        let arr: TickerAlert[] = []
+
+        for(let obj of array) {
+            obj.alerts = this.unique(obj.alerts, ['dir', 'val'])
+            arr.push(obj)
+        }
+
+        return _.uniqWith(arr, _.isEqual)
+    }
+    // makeUnique(arr: TickerAlert[]): TickerAlert[] {
+    //     let uniqueArr: TickerAlert[] = []
+    //     for (const tickerValue of arr) {
+    //         tickerValue.alerts = [...new Set(tickerValue.alerts)]
+    //         uniqueArr.push(tickerValue)
+    //     }
+    //     return uniqueArr
+    // }
 }
