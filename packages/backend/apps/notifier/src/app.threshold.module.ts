@@ -1,7 +1,8 @@
 import {Module} from '@nestjs/common';
-import {ThresholdController} from "./app.controller";
 import {ThresholdService} from "./app.service";
 import {ThrottlerModule} from "@nestjs/throttler";
+import {ThresholdController} from "./app.threshold.controller";
+import {NotifierController} from "./app.notifier.controller";
 
 @Module({
     imports: [
@@ -10,7 +11,7 @@ import {ThrottlerModule} from "@nestjs/throttler";
             limit: 1000,
         }),
     ],
-    controllers: [ThresholdController],
+    controllers: [ThresholdController, NotifierController],
     providers: [ThresholdService],
 })
 export class ThresholdsModule {}
