@@ -2,6 +2,8 @@ import {Controller, Header, Post, Req} from "@nestjs/common";
 import {ThresholdService} from "./app.service";
 import {TickerAlert, TickerPrice} from "./thresholds.dto";
 import {Source, ThresholdDir} from "./thresholds.keys";
+import bot, {TELEGRAM_BOT_ID} from "./telegram";
+import {Cron} from "@nestjs/schedule";
 
 const CoinGecko = require('coingecko-api');
 const CoinGeckoClient = new CoinGecko();
@@ -14,6 +16,7 @@ export class NotifierController {
         "crypto/coingecko"
     ]) // TODO: cron + tg message
     @Header('content-type', 'application/json')
+    @Cron('00 * * * * *')
     async notifier_crypto(
         @Req() req: Request
     ) {
@@ -41,16 +44,18 @@ export class NotifierController {
             for(const alert of alerts) {
                 let msg = ''
                 if(alert.dir === ThresholdDir.above && price >= alert.val) {
-                    msg = `Price of ${ticker} has just exceeded your alert price of ${alert.val}`
+                    msg = `⚠ ${ticker} >= ${alert.val}` //msg = `Price of ${ticker} has just exceeded your alert price of ${alert.val}`
                     console.log(msg);
+                    await bot.telegram.sendMessage(TELEGRAM_BOT_ID, msg)
                     await this.appService.rm_threshold(ticker, alert.dir, alert.val)
                 } else if(alert.dir === ThresholdDir.below && price <= alert.val) {
-                    msg = `Price of ${ticker} fell below your alert price of ${alert.val}`
+                    msg = `⚠ ${ticker} <= ${alert.val}` //msg = `Price of ${ticker} fell below your alert price of ${alert.val}`
                     console.log(msg);
+                    await bot.telegram.sendMessage(TELEGRAM_BOT_ID, msg)
                     await this.appService.rm_threshold(ticker, alert.dir, alert.val)
                 }
             }
-            console.log(`ticker: ${ticker} = ${price}`);
+            //await bot.telegram.sendMessage(TELEGRAM_BOT_ID, `⚠️ ticker: ${ticker} = ${price}`)
         }
     }
 }

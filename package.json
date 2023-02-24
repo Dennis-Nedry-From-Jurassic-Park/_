@@ -10,8 +10,13 @@
     "shared/**"
   ],
   "scripts": {
+    "------------ lage ------------": "------------ lage ------------",
+    "npx:lage:init": "npx lage init",
     "------------ pnpm ------------": "------------ pnpm ------------",
     "pnpm:install": "npx pnpm -r install --recursive",
+    "----------- doppler -----------": "---------- doppler -----------",
+    "doppler:login": "doppler login",
+    "doppler:setup": "doppler setup",
     "----------- common -----------": "----------- common -----------",
     "build-nest": "nest build",
     "docker:run:stop:all": "docker stop $(docker ps -a -q)",
@@ -30,10 +35,14 @@
     "lint-q": "eslint --color --fix --quiet --ext .ts,.js,.jsx packages/backend/apps/ms-src/src",
     "test": "jest",
     "------------------------------": "------------------------------",
-    "_prepare": "husky install"
+    "_prepare": "husky install",
+    "lage": "lage"
   },
   "dependencies": {
     "rxjs": "^7.5.6"
   },
-  "packageManager": "^pnpm@7.26.3"
+  "packageManager": "^pnpm@7.26.3",
+  "devDependencies": {
+    "lage": "1.9.6"
+  }
 }
